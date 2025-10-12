@@ -1,0 +1,211 @@
+# Raspberry Pi Configuration for Pothole Detection System
+
+# Hardware Configuration
+hardware:
+  # Raspberry Pi Model
+  pi_model: "4B"  # 3B+, 4B, Zero 2W
+  ram: "4GB"      # 2GB, 4GB, 8GB
+  storage: "32GB" # SD card size
+  
+  # Camera Configuration
+  camera:
+    type: "usb_camera"  # pi_camera, usb_camera
+    model: "external_1080p"      # External 1080p USB camera
+    resolution: [1920, 1080]  # Full HD resolution
+    framerate: 30
+    device_id: 0  # USB camera device ID (usually 0 for first camera)
+    fourcc: "MJPG"  # Video codec for better performance
+    buffer_size: 1  # Reduce buffer for lower latency
+    
+  # GPS Module
+  gps:
+    model: "neo-6m"
+    interface: "uart"  # uart, usb
+    uart_port: "/dev/ttyS0"
+    usb_port: "/dev/ttyUSB0"
+    
+  # Additional Sensors (optional)
+  imu:
+    enabled: false
+    model: "mpu6050"
+    interface: "i2c"
+  
+  accelerometer:
+    enabled: false
+    threshold: 2.0  # g-force threshold for pothole detection
+
+# System Configuration
+system:
+  # OS Configuration
+  os: "raspberry_pi_os"
+  arch: "arm64"  # arm64, armv7l
+  
+  # Performance Settings
+  cpu:
+    governor: "performance"  # performance, powersave, ondemand
+    max_freq: 1800  # MHz
+    cores: 4
+    
+  memory:
+    gpu_split: 128  # MB allocated to GPU
+    swap_size: 2048  # MB
+    
+  # Power Management
+  power:
+    mode: "balanced"  # performance, balanced, power_save
+    usb_power: 1.2  # Amps
+    
+  # Thermal Management
+  thermal:
+    throttle_temp: 80  # Celsius
+    shutdown_temp: 85  # Celsius
+    fan_enabled: false
+    fan_trigger_temp: 70
+
+# Software Configuration
+software:
+  # Python Environment
+  python:
+    version: "3.9"
+    virtual_env: "/home/pi/pothole_env"
+    pip_cache: "/home/pi/.cache/pip"
+    
+  # PyTorch Configuration
+  pytorch:
+    version: "1.12.0"
+    backend: "cpu"  # cpu, gpu (if available)
+    num_threads: 4
+    
+  # OpenCV Configuration
+  opencv:
+    version: "4.5.0"
+    backend: "cpu"
+    use_gpu: false
+    
+  # ROS Configuration
+  ros:
+    version: "noetic"
+    workspace: "/home/pi/catkin_ws"
+    master_uri: "http://localhost:11311"
+
+# Network Configuration
+network:
+  # WiFi Configuration
+  wifi:
+    ssid: "your_wifi_ssid"
+    password: "your_wifi_password"
+    country: "US"
+    
+  # Ethernet Configuration
+  ethernet:
+    enabled: true
+    dhcp: true
+    static_ip: ""
+    
+  # Hotspot Configuration (optional)
+  hotspot:
+    enabled: false
+    ssid: "PotholeDetector"
+    password: "pothole123"
+    
+  # Remote Access
+  ssh:
+    enabled: true
+    port: 22
+    key_auth: true
+  
+  vnc:
+    enabled: false
+    port: 5900
+
+# Storage Configuration
+storage:
+  # Data Storage
+  data_path: "/home/pi/pothole_data"
+  model_path: "/home/pi/models"
+  log_path: "/home/pi/logs"
+  
+  # Database Configuration
+  database:
+    type: "sqlite"
+    path: "/home/pi/pothole_database.db"
+    backup_enabled: true
+    backup_interval: 24  # hours
+    
+  # Cloud Sync (optional)
+  cloud_sync:
+    enabled: false
+    provider: "gdrive"  # gdrive, dropbox, aws_s3
+    sync_interval: 60  # minutes
+
+# Deployment Configuration
+deployment:
+  # Installation Paths
+  install_path: "/home/pi/pothole-detection"
+  service_path: "/etc/systemd/system"
+  config_path: "/home/pi/.config/pothole-detection"
+  
+  # Service Configuration
+  services:
+    auto_start: true
+    restart_policy: "always"
+    
+  # Update Configuration
+  auto_update:
+    enabled: false
+    check_interval: 24  # hours
+    backup_before_update: true
+
+# Optimization Configuration
+optimization:
+  # Model Optimization
+  model:
+    quantization: true
+    pruning: false
+    batch_size: 1
+    
+  # System Optimization
+  system:
+    disable_gui: false
+    reduce_logging: false
+    optimize_memory: true
+    
+  # Performance Monitoring
+  monitoring:
+    cpu_usage: true
+    memory_usage: true
+    temperature: true
+    disk_usage: true
+    
+# Security Configuration
+security:
+  # Firewall
+  firewall:
+    enabled: true
+    allow_ssh: true
+    allow_vnc: false
+    
+  # Updates
+  auto_security_updates: true
+  
+  # Access Control
+  user_permissions:
+    camera_access: true
+    gpio_access: true
+    serial_access: true
+
+# Development Configuration
+development:
+  # Debug Settings
+  debug_mode: false
+  verbose_logging: false
+  
+  # Development Tools
+  tools:
+    jupyter: false
+    code_server: false
+    
+  # Testing
+  test_mode: false
+  mock_gps: false
+  mock_camera: false

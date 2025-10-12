@@ -1,0 +1,107 @@
+# ROS Node Configuration for Pothole Detection System
+
+# Camera Node Configuration
+camera_node:
+  camera_id: 0  # USB camera device ID
+  frame_rate: 30
+  image_width: 1920  # 1080p resolution width
+  image_height: 1080  # 1080p resolution height
+  compressed: true
+  publish_raw: true
+  jpeg_quality: 90
+  buffer_size: 1
+  fourcc: "MJPG"  # Use MJPG for better USB camera performance
+  auto_exposure: true
+  brightness: 0  # -100 to 100
+  contrast: 0    # -100 to 100
+  saturation: 0  # -100 to 100
+  hue: 0         # -180 to 180
+
+# Detection Node Configuration  
+detection_node:
+  model_path: "/path/to/your/model.pth"
+  model_type: "potholeNet"
+  confidence_threshold: 0.5
+  input_size: [224, 224]
+  device: "auto"  # auto, cpu, cuda
+  task: "classification"  # classification, detection
+  publish_visualization: true
+  processing_rate: 30  # Hz
+  queue_size: 1
+
+# GPS Node Configuration
+gps_node:
+  serial_port: "/dev/ttyUSB0"  # Linux: /dev/ttyUSB0, Windows: COM3
+  baud_rate: 9600
+  timeout: 1.0
+  publish_rate: 1.0  # Hz
+  fix_timeout: 5.0  # seconds
+  nmea_sentences: ["GGA", "RMC", "VTG"]
+
+# Mapping Node Configuration
+mapping_node:
+  confidence_threshold: 0.7
+  min_detections: 3
+  gps_timeout: 5.0  # seconds
+  maps_api_key: ""  # Your Google Maps API key
+  database_path: "/home/pi/pothole_database.db"
+  update_interval: 1.0  # seconds
+  nearby_radius: 0.01  # degrees (~1km)
+  duplicate_threshold: 0.0001  # degrees (~10m)
+
+# Topic Configuration
+topics:
+  camera:
+    image_raw: "/camera/image_raw"
+    image_compressed: "/camera/image_compressed"
+    camera_info: "/camera/camera_info"
+    
+  detection:
+    results: "/pothole_detection/results"
+    confidence: "/pothole_detection/confidence"
+    severity: "/pothole_detection/severity"
+    detected: "/pothole_detection/detected"
+    visualization: "/pothole_detection/visualization"
+    
+  gps:
+    fix: "/gps/fix"
+    position: "/gps/position"
+    raw: "/gps/raw"
+    status: "/gps/status"
+    
+  mapping:
+    updates: "/mapping/updates"
+    pothole_count: "/mapping/pothole_count"
+    nearby_potholes: "/mapping/nearby_potholes"
+
+# Frame IDs
+frames:
+  camera: "camera_link"
+  gps: "gps_link"
+  base: "base_link"
+  map: "map"
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARN, ERROR
+  log_to_file: true
+  log_directory: "/home/pi/logs"
+  max_log_size: "10MB"
+  backup_count: 5
+
+# Performance Configuration
+performance:
+  max_cpu_usage: 80  # percent
+  max_memory_usage: 512  # MB
+  watchdog_timeout: 30  # seconds
+  
+# Safety Configuration
+safety:
+  emergency_stop_topic: "/emergency_stop"
+  max_speed: 50  # km/h for GPS tracking
+  geofence_enabled: false
+  geofence_bounds:
+    min_lat: 0.0
+    max_lat: 0.0
+    min_lon: 0.0
+    max_lon: 0.0

@@ -1,0 +1,81 @@
+# Model Configuration
+model:
+  type: "potholeNet"  # Options: potholeNet, mini, detector
+  num_classes: 2
+  input_size: [224, 224]
+  with_depth: false
+  dropout_rate: 0.3
+  width_multiplier: 1.0
+
+# Training Configuration
+training:
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam"  # Options: adam, adamw, sgd
+  scheduler: "cosine"  # Options: cosine, step, plateau
+  loss_type: "combined"  # Options: combined, focal, crossentropy
+  use_focal: false
+  early_stopping_patience: 15
+  gradient_clip_val: 1.0
+  mixed_precision: true
+  save_best_only: true
+  log_interval: 10
+
+# Data Configuration
+data:
+  image_dir: "./data/images"
+  annotation_file: "./data/annotations.json"
+  test_size: 0.2
+  val_size: 0.15
+  num_workers: 4
+  pin_memory: true
+  task: "classification"  # Options: classification, detection
+
+# Augmentation Configuration
+augmentation:
+  horizontal_flip: true
+  random_brightness_contrast: true
+  color_jitter: true
+  gaussian_blur: true
+  motion_blur: true
+  random_gamma: true
+  clahe: true
+
+# Device Configuration
+device:
+  type: "auto"  # Options: auto, cpu, cuda
+  gpu_id: 0
+
+# Paths
+paths:
+  model_save_dir: "./models"
+  log_dir: "./logs"
+  checkpoint_dir: "./checkpoints"
+  results_dir: "./results"
+
+# Inference Configuration
+inference:
+  confidence_threshold: 0.5
+  nms_threshold: 0.4  # For detection task
+  max_detections: 100  # For detection task
+  
+# Model Optimization
+optimization:
+  quantization: false
+  pruning: false
+  onnx_export: false
+  tensorrt: false
+
+# Experiment Configuration
+experiment:
+  name: "pothole_detection_v1"
+  description: "Lightweight CNN for pothole detection optimized for Raspberry Pi"
+  tags: ["pothole", "detection", "raspberry-pi", "lightweight"]
+  
+# Monitoring
+monitoring:
+  wandb_enabled: false
+  wandb_project: "pothole-detection"
+  tensorboard_enabled: true
