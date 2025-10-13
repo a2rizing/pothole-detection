@@ -1,0 +1,27 @@
+{
+  "dataset_ready": true,
+  "total_images": 1196,
+  "splits": {
+    "train": {
+      "pothole": 425,
+      "no_pothole": 340,
+      "total": 765
+    },
+    "val": {
+      "pothole": 107,
+      "no_pothole": 85,
+      "total": 192
+    },
+    "test": {
+      "pothole": 133,
+      "no_pothole": 106,
+      "total": 239
+    }
+  },
+  "next_steps": [
+    "\u2705 Good class balance",
+    "\u2705 Dataset ready for PyTorch training",
+    "\ud83d\ude80 Install PyTorch: pip install torch torchvision",
+    "\ud83c\udfaf Start training: python src/train.py"
+  ]
+}

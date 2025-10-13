@@ -1,0 +1,31 @@
+{
+  "source": "Kaggle - chitholian/annotated-potholes-dataset",
+  "format": "Pascal VOC XML",
+  "processed_date": "C:\\Users\\ABHISHEK ARUN RAJA\\Documents\\Coding Projects\\pothole-detection",
+  "datasets_created": [
+    "classification",
+    "detection"
+  ],
+  "classification": {
+    "train": {
+      "pothole": 425,
+      "no_pothole": 340,
+      "total": 765
+    },
+    "val": {
+      "pothole": 107,
+      "no_pothole": 85,
+      "total": 192
+    },
+    "test": {
+      "pothole": 133,
+      "no_pothole": 106,
+      "total": 239
+    }
+  },
+  "detection": {
+    "images": 665,
+    "annotations": 1740,
+    "categories": 1
+  }
+}

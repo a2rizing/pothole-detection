@@ -9,15 +9,15 @@ model:
 
 # Training Configuration
 training:
-  epochs: 100
-  batch_size: 32
+  epochs: 50
+  batch_size: 16
   learning_rate: 0.001
   weight_decay: 0.0001
-  optimizer: "adam"  # Options: adam, adamw, sgd
+  optimizer: "adamw"  # Options: adam, adamw, sgd
   scheduler: "cosine"  # Options: cosine, step, plateau
-  loss_type: "combined"  # Options: combined, focal, crossentropy
+  loss_type: "crossentropy"  # Options: combined, focal, crossentropy
   use_focal: false
-  early_stopping_patience: 15
+  early_stopping_patience: 10
   gradient_clip_val: 1.0
   mixed_precision: true
   save_best_only: true
@@ -25,8 +25,8 @@ training:
 
 # Data Configuration
 data:
-  image_dir: "./data/images"
-  annotation_file: "./data/annotations.json"
+  image_dir: "./data/processed/classification"
+  annotation_file: "./data/processed/detection/annotations/instances_all.json"
   test_size: 0.2
   val_size: 0.15
   num_workers: 4

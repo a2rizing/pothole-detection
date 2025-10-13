@@ -637,17 +637,49 @@ class Trainer:
         plt.show()
 
 
-# Training script example
+# Training script with command line interface
 def main():
-    """Main training function"""
+    """Main training function with command line arguments"""
+    import argparse
+    import yaml
     
-    # Configuration
-    config = {
-        'epochs': 50,
-        'learning_rate': 0.001,
-        'batch_size': 32,
-        'image_size': (224, 224),
-        'model_type': 'potholeNet',
+    parser = argparse.ArgumentParser(description='Train Pothole Detection Model')
+    parser.add_argument('--config', type=str, help='Path to config file')
+    parser.add_argument('--data-dir', type=str, default='data/synthetic', help='Dataset directory')
+    parser.add_argument('--task', choices=['classification', 'detection'], default='classification', help='Task type')
+    parser.add_argument('--model', choices=['mini', 'pothole_net', 'pothole_detector'], default='mini', help='Model type')
+    parser.add_argument('--epochs', type=int, default=20, help='Number of epochs')
+    parser.add_argument('--batch-size', type=int, default=32, help='Batch size')
+    parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--image-size', nargs=2, type=int, default=[224, 224], help='Image size')
+    parser.add_argument('--quick-test', action='store_true', help='Quick test mode')
+    parser.add_argument('--quick-mode', action='store_true', help='Quick training mode')
+    parser.add_argument('--mixed-precision', action='store_true', help='Use mixed precision')
+    parser.add_argument('--augment-heavy', action='store_true', help='Use heavy augmentation')
+    parser.add_argument('--export-mobile', action='store_true', help='Export mobile-optimized model')
+    parser.add_argument('--num-workers', type=int, default=4, help='Number of data workers')
+    
+    args = parser.parse_args()
+    
+    # Quick test mode with minimal settings
+    if args.quick_test:
+        args.epochs = 5
+        args.batch_size = 16
+        args.image_size = [128, 128]
+        print("🚀 Quick test mode: 5 epochs, small images, fast training")
+    
+    # Load config file if provided
+    if args.config and os.path.exists(args.config):
+        with open(args.config, 'r') as f:
+            config = yaml.safe_load(f)
+    else:
+        # Default configuration
+        config = {
+            'epochs': args.epochs,
+            'learning_rate': args.lr,
+            'batch_size': args.batch_size,
+            'image_size': args.image_size,
+            'model_type': args.model,
         'optimizer': 'adam',
         'scheduler': 'cosine',
         'use_focal': False,
@@ -666,34 +698,65 @@ def main():
         with_depth=False
     )
     
-    # Create data loaders (example - adjust paths)
+    # Check if dataset exists
+    data_dir = Path(args.data_dir)
+    if not data_dir.exists():
+        print(f"❌ Dataset directory not found: {data_dir}")
+        print("Run: python scripts/prepare_datasets.py --synthetic")
+        return
+
+    # Create data loaders
     try:
-        dataloaders = get_dataloaders(
-            image_dir="./data/images",
+        train_loader, val_loader, test_loader = get_dataloaders(
+            data_dir=str(data_dir),
+            task=config['task'],
             batch_size=config['batch_size'],
-            image_size=config['image_size'],
-            task='classification'
+            image_size=tuple(config['image_size']),
+            num_workers=args.num_workers,
+            augment=args.augment_heavy
         )
+        
+        print(f"📊 Dataset loaded:")
+        print(f"  Train samples: {len(train_loader.dataset)}")
+        print(f"  Val samples: {len(val_loader.dataset)}")
+        if test_loader:
+            print(f"  Test samples: {len(test_loader.dataset)}")
         
         # Create trainer
         trainer = Trainer(
             model=model,
-            train_loader=dataloaders['train'],
-            val_loader=dataloaders['val'],
-            test_loader=dataloaders['test'],
+            train_loader=train_loader,
+            val_loader=val_loader,
+            test_loader=test_loader,
             config=config,
             device=device
         )
         
         # Start training
+        print("🚀 Starting training...")
         history = trainer.train()
         
-        print("Training completed successfully!")
+        print("✅ Training completed successfully!")
+        print(f"📁 Results saved to: {trainer.save_dir}")
+        
+        return history
         
     except Exception as e:
-        print(f"Training failed: {e}")
+        print(f"❌ Training failed: {e}")
         print("Make sure to prepare your dataset first!")
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 if __name__ == "__main__":
+    # Handle imports at runtime
+    try:
+        import yaml
+    except ImportError:
+        print("Installing required package: pyyaml")
+        import subprocess
+        subprocess.check_call(['pip', 'install', 'pyyaml'])
+        import yaml
+    
     main()
