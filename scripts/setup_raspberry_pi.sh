@@ -1,13 +1,35 @@
 #!/bin/bash
 
-# Pothole Detection System Setup Script for Raspberry Pi
-# This script sets up the complete environment for the pothole detection system
+# 🍓 Raspberry Pi Auto-Setup Script for Pothole Detection System
+# Usage: sudo bash scripts/setup_raspberry_pi.sh
 
 set -e  # Exit on any error
 
-echo "==================================="
-echo "Pothole Detection System Setup"
-echo "==================================="
+echo "🍓 Starting Raspberry Pi Setup for Pothole Detection System..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Helper functions
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
 
 # Check if running on Raspberry Pi
 if ! grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
