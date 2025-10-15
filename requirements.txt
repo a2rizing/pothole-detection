@@ -22,12 +22,19 @@ scipy>=1.7.0
 # GPS and Serial communication
 pyserial>=3.5
 pynmea2>=1.19.0
+gpsd-py3>=0.3.0
 
 # Database
 sqlite3  # Usually included with Python
 
-# HTTP requests for mapping
+# HTTP requests and mapping visualization
 requests>=2.28.0
+folium>=0.14.0
+geopy>=2.3.0
+
+# Additional Pi-specific packages
+RPi.GPIO>=0.7.1
+picamera>=1.13
 
 # Configuration handling
 PyYAML>=6.0

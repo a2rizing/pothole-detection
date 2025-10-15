@@ -44,10 +44,41 @@ logs/
 data/processed/
 data/images/
 data/synthetic/
+data/annotations/
 *.jpg
 *.jpeg
 *.png
 *.bmp
+
+# Project results and reports (not needed for Pi)
+final_project_results.json
+training_readiness.json
+*.json
+video_detection_results/
+test_videos/
+sample_training/
+
+# Large model files and training artifacts
+models/
+*.pth
+*.pt
+best.pt
+checkpoints/
+
+# Development and demo files (not needed for Pi)
+demo_presentation.py
+demo_launcher.bat
+quick_start.bat
+DEMO_GUIDE.md
+QUICK_TRAINING_GUIDE.md
+TRAINING_GUIDE.md
+PROJECT_SUMMARY.md
+POTHOLE_DETECTION_ALGORITHM.md
+VIDEO_TESTING_GUIDE.md
+USB_CAMERA_DEPLOYMENT_CHECKLIST.md
+
+# Python virtual environment
+pothole_env/
 *.tiff
 *.gif
 

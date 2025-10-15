@@ -1,11 +1,13 @@
 @echo off
-REM Quick Start Training Script for Windows
-REM Run this to get training results immediately!
+:: 🎯 POTHOLE DETECTION SYSTEM - TEACHER DEMO QUICK START
+:: ======================================================
+:: Perfect for immediate classroom demonstrations!
 
 echo.
-echo ================================================================
-echo                 POTHOLE DETECTION QUICK START
-echo ================================================================
+echo ========================================
+echo   🕳️ POTHOLE DETECTION SYSTEM
+echo     Teacher Demo - Quick Start
+echo ========================================
 echo.
 
 cd /d "%~dp0"
