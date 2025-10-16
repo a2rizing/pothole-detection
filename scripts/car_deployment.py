@@ -479,30 +479,27 @@ class CarPotholeDetector:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
                 
                 # Show frame
-                try:
-                    cv2.imshow('🚗 Pi Pothole Detection', display_frame)
-                    
-                    # Handle keyboard input
-                    key = cv2.waitKey(1) & 0xFF
-                    if key == ord('q'):
-                        print("\n🛑 Stopping detection...")
-                        break
-                    elif key == ord('s'):
-                        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                        filename = f"detection_output/frame_{timestamp}.jpg"
-                        cv2.imwrite(filename, display_frame)
-                        print(f"💾 Frame saved: {filename}")
-                    elif key == ord('m'):
-                        map_file = self.create_detection_map()
-                    elif key == ord('r'):
-                        self.reset_stats()
-                        print("📊 Statistics reset")
-                        
-                except Exception as e:
-                    # If window display fails, show error and stop
-                    print(f"❌ Display error: {e}")
-                    print("🛑 Stopping due to display error...")
+                cv2.imshow('🚗 Pi Pothole Detection', display_frame)
+                
+                # Handle keyboard input
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    print("\n🛑 Stopping detection...")
                     break
+                elif key == ord('s'):
+                    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                    filename = f"detection_output/frame_{timestamp}.jpg"
+                    cv2.imwrite(filename, display_frame)
+                    print(f"💾 Frame saved: {filename}")
+                elif key == ord('m'):
+                    map_file = self.create_detection_map()
+                elif key == ord('r'):
+                    self.reset_stats()
+                    print("📊 Statistics reset")
+                
+                # Print status periodically
+                if self.total_frames % 30 == 0:
+                    print(f"📹 Frame {self.total_frames} | FPS: {1/frame_time:.1f}" if frame_time > 0 else f"� Frame {self.total_frames}")
                 
                 # Calculate frame time
                 frame_time = time.time() - start_time
