@@ -479,7 +479,7 @@ class CarPotholeDetector:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
                 
                 # Show frame
-                cv2.imshow('🚗 Pi Pothole Detection', display_frame)
+                cv2.imshow('Pi Pothole Detection', display_frame)
                 
                 # Handle keyboard input
                 key = cv2.waitKey(1) & 0xFF
@@ -510,8 +510,7 @@ class CarPotholeDetector:
         finally:
             # Cleanup
             cap.release()
-            if not headless and os.environ.get('DISPLAY'):
-                cv2.destroyAllWindows()
+            cv2.destroyAllWindows()
             
             # Close GPS connection
             if hasattr(self, 'gps_serial') and self.gps_serial:
