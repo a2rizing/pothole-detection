@@ -73,8 +73,12 @@ class CarPotholeDetector:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f"Using device: {self.device}")
         
+        # Initialize statistics first (before model loading)
+        self.reset_stats()
+        
         # Load model
         self.model = SimplePotholeNet(num_classes=2)
+        self.model_loaded = False
         try:
             if os.path.exists(model_path):
                 checkpoint = torch.load(model_path, map_location=self.device)
@@ -83,24 +87,25 @@ class CarPotholeDetector:
                 else:
                     self.model.load_state_dict(checkpoint)
                 print(f"✅ Model loaded from {model_path}")
+                self.model_loaded = True
             else:
                 print(f"❌ Model file not found: {model_path}")
                 print("Please copy your trained model to the Pi!")
-                return
+                print("⚠️  Running in demo mode without detection...")
+                self.model_loaded = False
         except Exception as e:
             print(f"❌ Error loading model: {e}")
-            return
+            print("⚠️  Running in demo mode without detection...")
+            self.model_loaded = False
         
         self.model.to(self.device)
-        self.model.eval()
+        if self.model_loaded:
+            self.model.eval()
         
         # Detection parameters
         self.confidence_threshold = 0.75
         self.grid_size = (3, 4)  # rows, cols
         self.input_size = (224, 224)
-        
-        # Statistics
-        self.reset_stats()
         
         # Create output directories
         os.makedirs('detection_output', exist_ok=True)
@@ -218,6 +223,11 @@ class CarPotholeDetector:
     def detect_potholes_grid(self, frame):
         """Detect potholes using grid-based approach"""
         detections = []
+        
+        # If model not loaded, return empty detections (demo mode)
+        if not self.model_loaded:
+            return detections
+            
         h, w = frame.shape[:2]
         
         # Focus on bottom 2/3 of frame (road area)
