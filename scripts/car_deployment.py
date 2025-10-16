@@ -503,11 +503,8 @@ class CarPotholeDetector:
                     # Headless mode - just print status
                     if has_potholes:
                         print(f"🚨 FRAME {self.total_frames}: {pothole_count} pothole(s) detected")
-                    
-                    # Auto-quit after some frames in headless mode for testing
-                    if self.total_frames >= 100:  # Run for 100 frames then stop
-                        print(f"\n🛑 Headless demo complete after {self.total_frames} frames")
-                        break
+                    elif self.total_frames % 30 == 0:  # Print status every 30 frames
+                        print(f"📹 Frame {self.total_frames} - No potholes detected")
                 
                 # Calculate frame time
                 frame_time = time.time() - start_time
