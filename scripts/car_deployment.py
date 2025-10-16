@@ -347,10 +347,16 @@ class CarPotholeDetector:
         print(f"🗺️  Map saved: {map_filename}")
         return map_filename
     
-    def run_live_detection(self, camera_id=0):
+    def run_live_detection(self, camera_id=0, headless=False):
         """Run live pothole detection on camera feed"""
         print("🚗 Starting Car Pothole Detection System...")
         print("📹 Initializing camera...")
+        
+        # Check if running headless (no display)
+        if headless or os.environ.get('DISPLAY') is None:
+            print("🖥️  Running in headless mode (no window display)")
+            import cv2
+            cv2.namedWindow = lambda *args, **kwargs: None  # Disable window creation
         
         # Initialize camera
         cap = cv2.VideoCapture(camera_id)
@@ -474,24 +480,34 @@ class CarPotholeDetector:
                 cv2.putText(display_frame, gps_text, (10, height-50), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
                 
-                # Show frame
-                cv2.imshow('🚗 Pi Pothole Detection', display_frame)
-                
-                # Handle keyboard input
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'):
-                    print("\n🛑 Stopping detection...")
-                    break
-                elif key == ord('s'):
-                    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    filename = f"detection_output/frame_{timestamp}.jpg"
-                    cv2.imwrite(filename, display_frame)
-                    print(f"💾 Frame saved: {filename}")
-                elif key == ord('m'):
-                    map_file = self.create_detection_map()
-                elif key == ord('r'):
-                    self.reset_stats()
-                    print("📊 Statistics reset")
+                # Show frame (only if not headless)
+                if not headless and os.environ.get('DISPLAY'):
+                    cv2.imshow('🚗 Pi Pothole Detection', display_frame)
+                    
+                    # Handle keyboard input
+                    key = cv2.waitKey(1) & 0xFF
+                    if key == ord('q'):
+                        print("\n🛑 Stopping detection...")
+                        break
+                    elif key == ord('s'):
+                        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                        filename = f"detection_output/frame_{timestamp}.jpg"
+                        cv2.imwrite(filename, display_frame)
+                        print(f"💾 Frame saved: {filename}")
+                    elif key == ord('m'):
+                        map_file = self.create_detection_map()
+                    elif key == ord('r'):
+                        self.reset_stats()
+                        print("📊 Statistics reset")
+                else:
+                    # Headless mode - just print status
+                    if has_potholes:
+                        print(f"🚨 FRAME {self.total_frames}: {pothole_count} pothole(s) detected")
+                    
+                    # Auto-quit after some frames in headless mode for testing
+                    if self.total_frames >= 100:  # Run for 100 frames then stop
+                        print(f"\n🛑 Headless demo complete after {self.total_frames} frames")
+                        break
                 
                 # Calculate frame time
                 frame_time = time.time() - start_time
@@ -502,7 +518,8 @@ class CarPotholeDetector:
         finally:
             # Cleanup
             cap.release()
-            cv2.destroyAllWindows()
+            if not headless and os.environ.get('DISPLAY'):
+                cv2.destroyAllWindows()
             
             # Close GPS connection
             if hasattr(self, 'gps_serial') and self.gps_serial:
@@ -542,13 +559,15 @@ def main():
                        help='Path to trained model')
     parser.add_argument('--camera', type=int, default=0, 
                        help='Camera ID (try 0, 1, 2 if camera not working)')
+    parser.add_argument('--headless', action='store_true',
+                       help='Run without display window (for SSH/remote)')
     args = parser.parse_args()
     
     print("🚗 Car Pothole Detection System")
     print("="*40)
     
     detector = CarPotholeDetector(model_path=args.model)
-    success = detector.run_live_detection(camera_id=args.camera)
+    success = detector.run_live_detection(camera_id=args.camera, headless=args.headless)
     
     if success:
         print("\n✅ System ready for car deployment!")
