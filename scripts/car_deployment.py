@@ -478,8 +478,8 @@ class CarPotholeDetector:
                 cv2.putText(display_frame, gps_text, (10, height-50), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
                 
-                # Show frame (only if not headless)
-                if not headless and os.environ.get('DISPLAY'):
+                # Show frame
+                try:
                     cv2.imshow('🚗 Pi Pothole Detection', display_frame)
                     
                     # Handle keyboard input
@@ -497,12 +497,11 @@ class CarPotholeDetector:
                     elif key == ord('r'):
                         self.reset_stats()
                         print("📊 Statistics reset")
-                else:
-                    # Headless mode - just print status
+                        
+                except Exception as e:
+                    # If window display fails, continue processing
                     if has_potholes:
-                        print(f"🚨 FRAME {self.total_frames}: {pothole_count} pothole(s) detected")
-                    elif self.total_frames % 30 == 0:  # Print status every 30 frames
-                        print(f"📹 Frame {self.total_frames} - No potholes detected")
+                        print(f"� FRAME {self.total_frames}: {pothole_count} pothole(s) detected")
                 
                 # Calculate frame time
                 frame_time = time.time() - start_time
