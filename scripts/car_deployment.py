@@ -355,8 +355,6 @@ class CarPotholeDetector:
         # Check if running headless (no display)
         if headless or os.environ.get('DISPLAY') is None:
             print("🖥️  Running in headless mode (no window display)")
-            import cv2
-            cv2.namedWindow = lambda *args, **kwargs: None  # Disable window creation
         
         # Initialize camera
         cap = cv2.VideoCapture(camera_id)
