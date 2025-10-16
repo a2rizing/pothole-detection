@@ -499,9 +499,10 @@ class CarPotholeDetector:
                         print("📊 Statistics reset")
                         
                 except Exception as e:
-                    # If window display fails, continue processing
-                    if has_potholes:
-                        print(f"� FRAME {self.total_frames}: {pothole_count} pothole(s) detected")
+                    # If window display fails, show error and stop
+                    print(f"❌ Display error: {e}")
+                    print("🛑 Stopping due to display error...")
+                    break
                 
                 # Calculate frame time
                 frame_time = time.time() - start_time
